@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bir VarmÄ±ÅŸ Biz VarmÄ±ÅŸ â€” Dijital AnlatÄ± ve Masal PortalÄ±</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090e;
+      --card: #10141d;
+      --border: #212836;
+      --gold: #d4af37;
+      --gold-hover: #b89726;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(16, 20, 29, 0.85);
+      backdrop-filter: blur(10px);
+    }
+    .logo {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+    .reader-container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+    }
+    .chapter-badge {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    .story-title {
+      font-family: 'Cinzel', serif;
+      font-size: 2.4rem;
+      color: #fff;
+      margin-bottom: 2rem;
+      line-height: 1.3;
+    }
+    .story-body p {
+      margin-bottom: 1.5rem;
+      font-size: 1.15rem;
+      color: #cbd5e1;
+    }
+    .ambient-player {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .play-btn {
+      background: var(--gold);
+      color: #000;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .play-btn:hover { background: var(--gold-hover); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">BÄ°R VARMIÅ BÄ°Z VARMIÅ</div>
+    <div><a href="https://github.com/korrayt/bir-varmis-biz-varmis" style="color: var(--gold); text-decoration: none; font-weight: 600;">GitHub â†’</a></div>
+  </header>
+
+  <main class="reader-container">
+    <div class="chapter-badge">BÃ¶lÃ¼m I</div>
+    <h1 class="story-title">ZamanÄ±n Ã–tesindeki HafÄ±za</h1>
+    <div class="story-body">
+      <p>Bir varmÄ±ÅŸ, bir yokmuÅŸ... ZamanÄ±n henÃ¼z dijital sinyallere bÃ¶lÃ¼nmediÄŸi, sÃ¶zÃ¼n rÃ¼zgÃ¢rla taÅŸÄ±ndÄ±ÄŸÄ± kadim Ã§aÄŸlarda, daÄŸlarÄ±n doruklarÄ±nda yankÄ±lanan bir ses vardÄ±.</p>
+      <p>O ses; yalnÄ±zlÄ±ÄŸÄ±n deÄŸil, bir araya gelmenin, "ben" yerine "biz" olabilmenin hikÃ¢yesini fÄ±sÄ±ldardÄ±. Gece iner, gÃ¶kyÃ¼zÃ¼ndeki yÄ±ldÄ±zlar kadim desenlere bÃ¼rÃ¼nÃ¼rken, ateÅŸin baÅŸÄ±nda toplananlar geleceÄŸi dÃ¼ÅŸlerdi.</p>
+      <p>Ve ÅŸimdi, binlerce yÄ±l sonra, aynÄ± ruh yeni ekranlarÄ±n ardÄ±nda, aynÄ± kadim heyecanla yeniden uyanÄ±yor.</p>
+    </div>
+
+    <div class="ambient-player">
+      <div>
+        <div style="font-weight: 700; color: #fff;">ğŸ§ Ambiyans: Gece & AteÅŸ Sesi</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">Okuma deneyimi iÃ§in arka plan ses efekti</div>
+      </div>
+      <button class="play-btn" id="playBtn" onclick="toggleAudio()">AmbiyansÄ± BaÅŸlat</button>
+    </div>
+  </main>
+
+  <script>
+    let isPlaying = false;
+    let audioCtx = null;
+    let osc = null;
+
+    function toggleAudio() {
+      if (!isPlaying) {
+        // Simple synthetic ambient pink noise / drone
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const bufferSize = audioCtx.sampleRate * 2;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = (Math.random() * 2 - 1) * 0.05;
+        }
+        const whiteNoise = audioCtx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+        whiteNoise.connect(audioCtx.destination);
+        whiteNoise.start();
+        isPlaying = true;
+        document.getElementById('playBtn').textContent = 'Durdur';
+      } else {
+        if (audioCtx) audioCtx.close();
+        isPlaying = false;
+        document.getElementById('playBtn').textContent = 'AmbiyansÄ± BaÅŸlat';
+      }
+    }
+  </script>
+</body>
+</html>
